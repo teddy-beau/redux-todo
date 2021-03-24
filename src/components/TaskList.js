@@ -3,20 +3,41 @@ import { useSelector } from "react-redux";
 
 const TaskList = () => {
    const tasks = useSelector((state) => {
-      return state.tasks;
+      return state.todoReducer.tasks;
    });
+
+   const filter = useSelector((state) => {
+      return state.filterReducer.filter;
+   });
+
+   let filteredTasks = [];
+   if (filter === "all") {
+      filteredTasks = [...tasks];
+   } else if (filter === "active") {
+      for (let i = 0; i < tasks.length; i++) {
+         if (tasks[i].active) {
+            filteredTasks.push(tasks[i]);
+         }
+      }
+   } else {
+      for (let i = 0; i < tasks.length; i++) {
+         if (!tasks[i].active) {
+            filteredTasks.push(tasks[i]);
+         }
+      }
+   }
+
    return (
       <div className="container">
-         <h2>My tasks:</h2>
+         <h2>My tasks</h2>
          {tasks.length > 0 ? (
             <ul>
-               {tasks.map((elem, index) => {
-                  console.log(elem);
+               {filteredTasks.map((elem, index) => {
                   return <Task task={elem} index={index} key={index} />;
                })}
             </ul>
          ) : (
-            <p>No tasks yet!</p>
+            <p>No tasks</p>
          )}
       </div>
    );
